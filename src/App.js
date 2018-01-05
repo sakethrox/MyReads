@@ -1,11 +1,10 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
-import Read from './Read.js'
-import WantToRead from "./wantToRead.js";
-import CurrentlyReading from "./currentlyReading.js"
+import Bookshelf from "./Bookshelf.js"
 import SearchBook from "./searchBook.js"
 import {Link, Route} from 'react-router-dom'
+
 
 class BooksApp extends React.Component {
     //books manages the state of this component. This state is passed down to other components
@@ -30,12 +29,17 @@ class BooksApp extends React.Component {
     //assign shelf for book from search and concat with books
     assignShelf = (book, value) => {
         book["shelf"] = value;
-        this.setState((state) => ({
-            books:state.books.concat(book)
-        }))
+        BooksAPI.update(book,value).then(() => {this.getBooks()})
+        //this.setState((state) => ({
+        //    books:state.books.concat(book)
+        //}))
     }
+    
 
   render() {
+    let read = this.state.books.filter((book) => book.shelf === 'read')
+    let currentlyreading = this.state.books.filter((book) => book.shelf === 'currentlyReading')
+    let wanttoread = this.state.books.filter((book) => book.shelf === 'wantToRead')
     return (
         <div>
             <Route exact path="/" render={() => (
@@ -46,18 +50,18 @@ class BooksApp extends React.Component {
                 <div className="app">
                     <div className="list-books-content">
                         <div>
-                            <CurrentlyReading handleChange={this.handleChange} books={this.state.books}/>
-                            <WantToRead handleChange={this.handleChange} books={this.state.books}/>
-                            <Read handleChange={this.handleChange} books={this.state.books}/>
+                            <Bookshelf handleChange={this.handleChange}  head='Currently Reading' books={currentlyreading}/>
+                            <Bookshelf handleChange={this.handleChange}  head='Want to Read' books={wanttoread}/>
+                            <Bookshelf handleChange={this.handleChange}  head='Read' books={read}/>
                         </div>
 
                     </div>
                 </div>
                 <div className="open-search">
-                    <Link to="/create">click</Link>
+                    <Link to="/search">click</Link>
                 </div>
             </div>)}/>
-            <Route path="/create" render={() => (<SearchBook assignShelf={this.assignShelf}/>)} />
+            <Route path="/search" render={() => (<SearchBook books={this.state.books} assignShelf={this.assignShelf}/>)} />
         </div>
     )
   }

@@ -13,9 +13,17 @@ class SearchBook extends Component{
     queryChange = (query) => {
         this.setState({query:query.trim()})
         if(query){BooksAPI.search(query,10).then((results) => {
+            results.map((result) => result['shelf'] = 'none')
+            results.forEach((book) => {
+                this.props.books.forEach((book1) => {
+                    if (book1.id === book.id)
+                        book.shelf = book1.shelf;
+                })
+            })
             this.setState({ searchlist:results })
             //handling exception if incorrect query is sent.
-        }).catch(error => {alert('Invalid Query!');this.setState({ searchlist:'' }) })  }  
+        }).catch(error => {alert('Invalid Query!');this.setState({ searchlist:'' }) })  }
+        if(query === ''){this.setState({ searchlist:'' })}  
     }
     
     render(){
@@ -44,7 +52,7 @@ class SearchBook extends Component{
                                     </div>
                                 </div>
                                 <div className="book-title">{book.title}</div>
-                                <div className="book-authors">{book.author}</div>
+                                <div className="book-authors">{book.authors ? book.authors.join(', ') : ''}</div>
                             </div>
                         </li>
                     ))}

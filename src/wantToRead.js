@@ -1,11 +1,11 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {PropTypes} from 'prop-types'
 
-class WantToRead extends Component{
-    render() {
+function WantToRead(props)
+    {
         //temp var to store the filtered list of books
         let showingBooks
-        showingBooks = this.props.books.filter((book) => book.shelf === 'wantToRead')
+        showingBooks = props.books.filter((book) => book.shelf === 'wantToRead')
 
         return (
             <div className="bookshelf">
@@ -19,7 +19,7 @@ class WantToRead extends Component{
                                 <div className="book-top">
                                     <div className="book-cover" style={{ width: 128, height: 188, backgroundImage: `url(${book.imageLinks.smallThumbnail})` }}></div>
                                     <div className="book-shelf-changer">
-                                        <select value={book.shelf} onChange={(event) => this.props.handleChange(book, event.target.value)}>
+                                        <select value={book.shelf} onChange={(event) => props.handleChange(book, event.target.value)}>
                                             <option value="none" disabled>Move to...</option>
                                             <option value="currentlyReading">Currently Reading</option>
                                             <option value="wantToRead">Want to Read</option>
@@ -30,7 +30,7 @@ class WantToRead extends Component{
                                 </div>
 
                                 <div className="book-title">{book.title}</div>
-                                <div className="book-authors">{book.author}</div>
+                                <div className="book-authors">{book.authors ? book.authors.join(', ') : ''}</div>
                             </div>
                         </li>
 
@@ -39,9 +39,9 @@ class WantToRead extends Component{
                 </div>
             </div>
         )
+
     }
 
-}
 //Ensuring we are receving an array for books parameter
 WantToRead.PropTypes = {books:PropTypes.array.isRequired}
 export default WantToRead
